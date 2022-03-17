@@ -1,9 +1,12 @@
 package Task1;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import java.util.Scanner;
 
 
@@ -13,49 +16,82 @@ public class Generate_One_Dimensional_Array {
 	
 	public static void main (String [] args) throws IOException {
 		
-		try {
-			int option  = 0;
-			int [] array;
-			int array_size;
-			
-			while (option<1 || option>4) {	
-				System.out.println("Select the mode of input. 1: By Keyboard; 2: by Text File; 3. Randomly generated; 4: Exit");
-				option = sc.nextInt();
-			}
-				switch(option) {
-				case 1:
-					System.out.println("Introduce the size of the array");
-					array_size = sc.nextInt();
-					array = new int [array_size];
-					for (int i = 0; i<array.length; i++) {
-						System.out.println("Introduce the value of the position "+i+" of the array");
-						array[i] = sc.nextInt();
-					}
-					break;
-				case 2:
-					System.out.println("Introduce the path of the file");
-					array = readFile(sc.next());
-					break;
-				case 3:
-					System.out.println("Introduce the size of the array");
-					array_size = sc.nextInt();
-					System.out.println("Introduce the maximum value of the numbers generated randomly");
-					array = array_random (array_size, sc.nextInt());
-					
-					break;
-				case 4:
-					sc.close();
-					System.out.println("Program finished");
-				}
-			
-		} catch (Exception e) {
-			System.out.println("Error. Introduce an Integer");
-			sc.next();
-			main(args);
-		}
-	
+		// IO = Increasing Order - DO = Decreasing Order - RO = Random Order
+		// SS = Selection Sort - IS = Insertion Sort - BS = Bubble Sort
 		
+		int [] sizes = {100, 500, 1000, 5000, 8000, 9000, 10000, 11000, 20000, 50000};
+		long time_SS = 0;
+		long time_IS = 0;
+		long time_BS = 0;;
+		System.out.println("SIZE  ORDER      INSERTION        SELECTION         BUBBLE      ");
+		for (int i=0; i<sizes.length;i++){
+			for (int j=0; j<3;j++) { // LOOP FOR INCREASING-DECREASING-RANDOM ORDER
+				if (j == 0) {
+					time_IS = Sorting_Algorithms.direct_insertion_sort_array(ascending_sort(array_random(sizes[i],sizes[i])));
+					time_SS = Sorting_Algorithms.direct_selection_sort_array(ascending_sort(array_random(sizes[i],sizes[i])));
+					time_BS = Sorting_Algorithms.bubble_sort_array(ascending_sort(array_random(sizes[i],sizes[i])));
+					System.out.println(sizes[i]+"    AO     "+(System.currentTimeMillis()-time_IS)+"     "+(System.currentTimeMillis()-time_SS)+"     "+(System.currentTimeMillis()-time_BS));
+					
+				} if (j == 1) {
+					time_IS = Sorting_Algorithms.direct_insertion_sort_array(descending_sort(array_random(sizes[i],sizes[i])));
+					time_SS = Sorting_Algorithms.direct_selection_sort_array(descending_sort(array_random(sizes[i],sizes[i])));
+					time_BS = Sorting_Algorithms.bubble_sort_array(descending_sort(array_random(sizes[i],sizes[i])));
+					System.out.println(sizes[i]+"    DO     "+(System.currentTimeMillis()-time_IS)+"     "+(System.currentTimeMillis()-time_SS)+"     "+(System.currentTimeMillis()-time_BS));
+					
+					
+				} if (j==2) {
+					time_IS = Sorting_Algorithms.direct_insertion_sort_array(array_random(sizes[i],sizes[i]));
+					time_SS = Sorting_Algorithms.direct_selection_sort_array(array_random(sizes[i],sizes[i]));
+					time_BS = Sorting_Algorithms.bubble_sort_array(array_random(sizes[i],sizes[i]));
+					System.out.println(sizes[i]+"    RO     "+(System.currentTimeMillis()-time_IS)+"     "+(System.currentTimeMillis()-time_SS)+"     "+(System.currentTimeMillis()-time_BS));
+				}
+					
+			}
+		}
 	}
+	
+	
+	public static int [] input_array_keyboard () {
+		System.out.println("Introduce the size of the array");
+		int array_size = sc.nextInt();
+		int [] array = new int [array_size];
+		for (int i = 0; i<array.length; i++) {
+			System.out.println("Introduce the value of the position "+i+" of the array");
+			array[i] = sc.nextInt();
+		}
+		return array;
+	}
+	
+	public static int [] descending_sort (int [] array) {
+		int temp = 0;
+		for (int i=0; i<array.length;i++) {
+			for (int j=i+1; j<array.length;j++) {
+				if (array[i]<array[j]) {
+					temp = array[i];
+					array[i] = array[j];
+					array[j] = temp;
+				}
+			}
+		}
+		
+		return array;
+	}
+	
+	public static int [] ascending_sort (int [] array) {
+		int temp = 0;
+		for (int i=0; i<array.length;i++) {
+			for (int j=i+1; j<array.length;j++) {
+				if (array[i]>array[j]) {
+					temp = array[i];
+					array[i] = array[j];
+					array[j] = temp;
+				}
+			}
+		}
+		
+		return array;
+	}
+		
 	
 	public static ArrayList<Integer> transform_array (int [] array) {
 		ArrayList<Integer> list = new ArrayList<>();
@@ -131,7 +167,24 @@ public class Generate_One_Dimensional_Array {
 		}
 		sc.close();
 		return count;
-}
+	}
+	
+	public static void print_array (int [] array) {
+		System.out.println("The array is the following one: ");
+		for (int i=0; i<array.length; i++) {
+			System.out.print("["+array[i]+"], ");
+		}
+	}
+	
+	public static void create_TXT (int LS, int Size, String name_txt) throws IOException {
+		File file = new File (name_txt);
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
+		for (int i=0; i<Size;i++) {
+			bw.write((int)(Math.random()*(LS-0+1)+0));
+			bw.newLine();
+		}
+		bw.close();
+	}
 	
 	
 }

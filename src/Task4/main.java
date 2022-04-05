@@ -10,21 +10,21 @@ public class main {
 		int objetivo = 0;
 		
 		for (int i=0; i<operators_array.length; i++ ) {
-			backtracking (0, actual, solucion, digit_array, objetivo, operators_array[i]);
+			backtracking (0, actual, digit_array, objetivo, operators_array[i]);
 		}
 		
 	}
 	
-	public static void backtracking (int etapa, int [] actual, int [] solucion, int digit_array [], int objetivo, char operator) {
+	public static void backtracking (int etapa, int [] actual, int digit_array [], int objetivo, char operator) {
 		if (etapa == actual.length) {
 			if (esSolucion(actual,digit_array,objetivo, operator)) {
-				System.arraycopy(actual, 0, solucion, 0, solucion.length);
+				//System.arraycopy(actual, 0, solucion, 0, solucion.length);
 			}
 		} else {
 			for (int i = 0; i<digit_array.length; i++ ) {
-				if (vale (etapa, i, actual)) {
+				if (Vale (i, etapa, actual)) {
 					actual[etapa] = i;
-					backtracking (etapa+1,actual, solucion, digit_array, objetivo,operator);
+					backtracking (etapa+1,actual, digit_array, objetivo,operator);
 				}
 			}
 				
@@ -65,7 +65,14 @@ public class main {
 		return result;
 	}
 	
-	public static boolean Vale (int i, int etapa, int actual [], int objetivo) {
+	public static boolean Vale (int i, int etapa, int actual []) {
+		boolean devolver = true;
+		for (int t=0; t<etapa && devolver; t++)  {
+			if (i==actual[t]) {
+				devolver = false;
+			}
+		}
+		return devolver;
 		
 	}
 }

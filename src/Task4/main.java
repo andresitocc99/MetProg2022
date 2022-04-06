@@ -18,6 +18,7 @@ public class main {
 	public static void backtracking (int etapa, int [] actual, int digit_array [], int objetivo, char operator) {
 		if (etapa == actual.length) {
 			if (esSolucion(actual,digit_array,objetivo, operator)) {
+				
 				//System.arraycopy(actual, 0, solucion, 0, solucion.length);
 			}
 		} else {
@@ -31,6 +32,8 @@ public class main {
 		}
 	
 	}
+	
+	
 	
 	public static boolean esSolucion (int [] actual, int [] digit_array, int objetivo, char operator) {
 		

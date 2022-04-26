@@ -4,6 +4,12 @@ public class main {
 	
 	public static void main(String[] args) {
 		int digit_array [] = generate_digit_array();
+		
+		System.out.println("Output array");
+		for (int i=0; i<digit_array.length; i++) {
+			System.out.print(digit_array[i]+" ");
+		}
+		System.out.println();
 		char operators [] = generate_operators_array();
 		char actual [] = new char [5];
 		int objetivo = ((int)(Math.random()*(99-(-9))))+(-9);
@@ -97,6 +103,14 @@ public class main {
 		return check;
 	}
 	
+	/**********************************************************************
+	* Method name: generate_digit_array
+	* Description of the Method: get an array of size 7 with non-repeated
+	* numbers from 0 to 9 and ordered randomly.
+	* Calling arguments: void.
+	* Return value: array of integers.
+	*********************************************************************/
+	
 	public static void backtracking (int etapa, char [] actual, int digit_array [], int objetivo, char operators [],char op) {
 		if (etapa == actual.length) {
 			if (esSolucion(actual,digit_array,objetivo)) {
@@ -105,21 +119,25 @@ public class main {
 					}
 					System.out.println();
 				//System.arraycopy(actual, 0, solucion, 0, solucion.length);
+			} else {
+				System.out.print("Combinación fallida: ");
+				for (int k=0;k<actual.length;k++) {
+					System.out.print(actual[k]+" ");
+				}
+				System.out.println();
 			}
 		} else {
 			for (int i = 0; i<digit_array.length; i++ ) {
-				/*if (Vale (i, etapa, actual)) {
-					actual[etapa+1] = i;
-					backtracking (etapa+1,actual, digit_array, objetivo);
-				}*/
-				
-				if (etapa >= 3 ) {
+				if (etapa == 2) {
 					actual[etapa]=operators[0];
 					backtracking (etapa+1,actual, digit_array, objetivo,operators,operators[1]);
 					
-				} else {
-					actual[etapa] = (char)i;
+				} else if (etapa < 2){
+					actual[etapa] = ((char)('0'+digit_array[i]));
 					backtracking (etapa+1,actual, digit_array, objetivo,operators,operators[0]);
+				} else if (etapa > 2){
+					actual[etapa] = ((char)('0'+digit_array[i]));
+					backtracking (etapa+1,actual, digit_array, objetivo,operators,operators[1]);
 				}
 			}
 				

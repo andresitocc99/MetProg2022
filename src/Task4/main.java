@@ -3,33 +3,86 @@ package Task4;
 public class main {
 	
 	public static void main(String[] args) {
-		int digit_array [] = new int [7];
-		char operators [] = new char [2];
-		char actual [] = new char [4];
-		int solucion [] = new int [4];
-		int objetivo = 0;
+		int digit_array [] = generate_digit_array();
+		char operators [] = generate_operators_array();
+		char actual [] = new char [5];
+		int objetivo = ((int)(Math.random()*(99-(-9))))+(-9);
 		
-		//for (int i=0; i<operators_array.length; i++ ) {
-			backtracking (0, actual, digit_array, objetivo,operators,operators[0]);
-		//}
+		backtracking (0, actual, digit_array, objetivo,operators,operators[0]);
 		
 	}
 	
+	/**********************************************************************
+	* Method name: generate_digit_array
+	* Description of the Method: get an array of size 7 with non-repeated
+	* numbers from 0 to 9 and ordered randomly.
+	* Calling arguments: void.
+	* Return value: array of integers.
+	*********************************************************************/
+	
 	public static int [] generate_digit_array () {
-		int array [] = new int [4];
-		int num_generated = 0;
+		int array [] = new int [7];
+		int num_generated = -1;
 		for (int i = 0; i<array.length;i++) {
 			if (i==0) {
-				array[i] = (int)(Math.random()*(9-0+1)+0);;
+				array[i] = ((int)(Math.random()*(9-0))+0);
 			} else {
 				do {
-					num_generated = (int)(Math.random()*(9-0+1)+0);;
-				} while (repeated(num_generated,array, i));		
+					num_generated = ((int)(Math.random()*(9-0))+0);
+				} while (repeated(num_generated,array, i));
+				array[i]=num_generated;
 			}		
 			
 		}
 		return array;
 	}
+	
+	/**********************************************************************
+	* Method name: generate_operators_array
+	* Description of the Method: get an array of operators of size two.
+	* Calling arguments: void.
+	* Return value: array of characters..
+	*********************************************************************/
+	
+	public static char [] generate_operators_array () {
+		int operator_array [] = new int [2];
+		int op_generated = -1;
+		
+		for (int i=0; i<2;i++) {
+			if (i==0) {
+				operator_array[i] = ((int)(Math.random()*(3-0))+0);
+			} else {
+				do {
+					op_generated = ((int)(Math.random()*(3-0))+0);
+				} while (repeated(op_generated,operator_array, i));		
+				operator_array[i]=op_generated;
+			}	
+		}
+		
+		char operators [] = new char [2];
+		 for (int j=0; j<2;j++) {
+			 if (operator_array[j]==0) {
+				 operators[j]='+';
+			 } else if (operator_array[j]==1) {
+				 operators[j]='-';
+			 } else if (operator_array[j]==2) {
+				 operators[j]='*';
+			 } else if (operator_array[j]==3) {
+				 operators[j]='/';
+			 } 
+		 }
+		
+		 return operators;
+		
+	}
+	
+	/**********************************************************************
+	* Method name: repeated
+	* Description of the Method: check if a number is already introduced 
+	* in a given array.
+	* Calling arguments: int numgenerated, int array[], int i.
+	* Return value: boolean.
+	*********************************************************************/
 	
 	public static boolean repeated (int num_generated, int array [], int i) {
 		
@@ -46,8 +99,11 @@ public class main {
 	
 	public static void backtracking (int etapa, char [] actual, int digit_array [], int objetivo, char operators [],char op) {
 		if (etapa == actual.length) {
-			if (esSolucion(actual,digit_array,objetivo) {
-				
+			if (esSolucion(actual,digit_array,objetivo)) {
+					for (int k=0;k<actual.length;k++) {
+						System.out.print(actual[k]+" ");
+					}
+					System.out.println();
 				//System.arraycopy(actual, 0, solucion, 0, solucion.length);
 			}
 		} else {
@@ -57,11 +113,12 @@ public class main {
 					backtracking (etapa+1,actual, digit_array, objetivo);
 				}*/
 				
-				if (etapa == 3 ) {
+				if (etapa >= 3 ) {
 					actual[etapa]=operators[0];
 					backtracking (etapa+1,actual, digit_array, objetivo,operators,operators[1]);
+					
 				} else {
-					actual[etapa+1] = i;
+					actual[etapa] = (char)i;
 					backtracking (etapa+1,actual, digit_array, objetivo,operators,operators[0]);
 				}
 			}

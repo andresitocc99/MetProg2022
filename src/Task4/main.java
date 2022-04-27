@@ -2,19 +2,36 @@ package Task4;
 
 public class main {
 	
+
 	public static void main(String[] args) {
-		int digit_array [] = generate_digit_array();
 		
-		System.out.println("Output array");
-		for (int i=0; i<digit_array.length; i++) {
-			System.out.print(digit_array[i]+" ");
-		}
-		System.out.println();
+		
+		int digit_array [] = generate_digit_array();
 		char operators [] = generate_operators_array();
-		char actual [] = new char [5];
+		char actual [] = new char [4];
 		int objetivo = ((int)(Math.random()*(99-(-9))))+(-9);
 		
-		backtracking (0, actual, digit_array, objetivo,operators,operators[0]);
+		System.out.print("Input array: ");
+		for (int i=0; i<digit_array.length; i++) {
+			System.out.print(digit_array[i]+", ");
+		}
+		System.out.print(operators[0]+", "+operators[1]);
+		System.out.println();
+		System.out.println("Objetivo: "+objetivo);
+		
+		//backtracking (0, actual, digit_array, objetivo,operators,0);
+		
+		/*if (!backtracking (0, actual, digit_array, objetivo,operators,0)) {
+			System.out.println("No hay posibles soluciones");
+		}*/
+		
+		
+			if (!backtracking (0, actual, digit_array, objetivo,operators,0)) {
+				System.out.println("No hay posibles soluciones");
+			}
+	//	}
+		
+		
 		
 	}
 	
@@ -111,49 +128,74 @@ public class main {
 	* Return value: array of integers.
 	*********************************************************************/
 	
-	public static void backtracking (int etapa, char [] actual, int digit_array [], int objetivo, char operators [],char op) {
+	/*public static boolean backtracking (int etapa, char [] actual, int digit_array [], int objetivo, char operators [],int etapa_2) {
+		
+		boolean finded = false;
 		if (etapa == actual.length) {
 			if (esSolucion(actual,digit_array,objetivo)) {
+					finded = true;
 					for (int k=0;k<actual.length;k++) {
 						System.out.print(actual[k]+" ");
 					}
 					System.out.println();
-				//System.arraycopy(actual, 0, solucion, 0, solucion.length);
-			} else {
-				System.out.print("Combinación fallida: ");
-				for (int k=0;k<actual.length;k++) {
-					System.out.print(actual[k]+" ");
-				}
-				System.out.println();
 			}
 		} else {
-			for (int i = 0; i<digit_array.length; i++ ) {
+			for (int i = 0; i<digit_array.length && !finded; i++ ) {
 				if (etapa == 2) {
-					actual[etapa]=operators[0];
-					backtracking (etapa+1,actual, digit_array, objetivo,operators,operators[1]);
+					actual[etapa]=operators[etapa_2];
 					
-				} else if (etapa < 2){
+					
+				} else  {
 					actual[etapa] = ((char)('0'+digit_array[i]));
-					backtracking (etapa+1,actual, digit_array, objetivo,operators,operators[0]);
-				} else if (etapa > 2){
-					actual[etapa] = ((char)('0'+digit_array[i]));
-					backtracking (etapa+1,actual, digit_array, objetivo,operators,operators[1]);
 				}
+				
+				finded = backtracking (etapa+1,actual, digit_array, objetivo,operators,0);
+				finded = backtracking (etapa+1,actual, digit_array, objetivo,operators,1);
+			
 			}
 				
 		}
+		
+		return finded;
+	
+	}*/
+	
+	public static boolean backtracking (int etapa, char [] actual, int digit_array [], int objetivo, char operators [],int etapa_2) {
+		
+		boolean finded = false;
+		if (etapa == actual.length) {
+			if (esSolucion(actual,digit_array,objetivo, etapa_2, operators)) {
+					finded = true;
+					for (int k=0;k<actual.length;k++) {
+						System.out.print(actual[k]+" ");
+					}
+					System.out.println();
+			}
+		} else {
+			for (int i = 0; i<digit_array.length && !finded; i++ ) {
+				
+				actual[etapa] = ((char)('0'+digit_array[i]));
+				
+				finded = backtracking (etapa+1,actual, digit_array, objetivo,operators,0);
+				finded = backtracking (etapa+1,actual, digit_array, objetivo,operators,1);
+			
+			}
+				
+		}
+		
+		return finded;
 	
 	}
 	
 	
 	
-	public static boolean esSolucion (char [] actual, int [] digit_array, int objetivo) {
+	public static boolean esSolucion (char [] actual, int [] digit_array, int objetivo, int etapa_2, char operators[]) {
 		
 		boolean result = false;
-		int first_op = Integer.valueOf(actual[0]+actual[1]);
-		int second_op = Integer.valueOf(actual[3]+actual[4]);
+		int first_op = Integer.parseInt(String.valueOf(actual[0])+String.valueOf(actual[1]));
+		int second_op = Integer.parseInt(String.valueOf(actual[2])+String.valueOf(actual[3]));
 		
-		switch(actual[2]) {
+		switch(operators[etapa_2]) {
 		
 		case '+':
 			if ((first_op + second_op)==objetivo) {

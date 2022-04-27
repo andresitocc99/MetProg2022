@@ -8,7 +8,7 @@ public class main {
 		
 		int digit_array [] = generate_digit_array();
 		char operators [] = generate_operators_array();
-		char actual [] = new char [4];
+		int actual [] = new int [4];
 		int objetivo = ((int)(Math.random()*(99-(-9))))+(-9);
 		
 		System.out.print("Input array: ");
@@ -19,7 +19,7 @@ public class main {
 		System.out.println();
 		System.out.println("Objetivo: "+objetivo);
 		
-		//backtracking (0, actual, digit_array, objetivo,operators,0);
+
 		
 		/*if (!backtracking (0, actual, digit_array, objetivo,operators,0)) {
 			System.out.println("No hay posibles soluciones");
@@ -160,21 +160,25 @@ public class main {
 	
 	}*/
 	
-	public static boolean backtracking (int etapa, char [] actual, int digit_array [], int objetivo, char operators [],int etapa_2) {
+	public static boolean backtracking (int etapa, int [] actual, int digit_array [], int objetivo, char operators [],int etapa_2) {
 		
 		boolean finded = false;
 		if (etapa == actual.length) {
 			if (esSolucion(actual,digit_array,objetivo, etapa_2, operators)) {
 					finded = true;
+					
 					for (int k=0;k<actual.length;k++) {
 						System.out.print(actual[k]+" ");
+						if (k==1) {
+							System.out.print(operators[etapa_2]+" ");
+						}
 					}
 					System.out.println();
 			}
 		} else {
 			for (int i = 0; i<digit_array.length && !finded; i++ ) {
 				
-				actual[etapa] = ((char)('0'+digit_array[i]));
+				actual[etapa] = digit_array[i];
 				
 				finded = backtracking (etapa+1,actual, digit_array, objetivo,operators,0);
 				finded = backtracking (etapa+1,actual, digit_array, objetivo,operators,1);
@@ -189,11 +193,11 @@ public class main {
 	
 	
 	
-	public static boolean esSolucion (char [] actual, int [] digit_array, int objetivo, int etapa_2, char operators[]) {
+	public static boolean esSolucion (int [] actual, int [] digit_array, int objetivo, int etapa_2, char operators[]) {
 		
 		boolean result = false;
-		int first_op = Integer.parseInt(String.valueOf(actual[0])+String.valueOf(actual[1]));
-		int second_op = Integer.parseInt(String.valueOf(actual[2])+String.valueOf(actual[3]));
+		int first_op = (actual[0]*10)+actual[1];
+		int second_op = (actual[2]*10)+actual[3];
 		
 		switch(operators[etapa_2]) {
 		

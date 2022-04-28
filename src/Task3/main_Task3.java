@@ -30,10 +30,11 @@ public class main_Task3 {
 			
 			for (int i=0; i<sol.length;i++) {
 				if (villages[sol[i]]!=0) {
-					System.out.print(villages[sol[i]]+" ");
+					System.out.println("Village Nº "+sol[i] + ": "+villages[sol[i]]+" ");
 				}
 			}
-			//System.out.println("Program finished");
+			
+			System.out.println("Program finished");
 			
 		} catch (InputMismatchException e) {
             System.out.println("Write numbers please");
@@ -136,10 +137,9 @@ public class main_Task3 {
 	}
 	
 	/**********************************************************************
-	* Method name: input_capacity_sledge
-	* Description of the Method: request the capacity of the sledge, checking
-	* that be bigger than 0.
-	* Calling arguments: 
+	* Method name: occupied_capacity
+	* Description of the Method: calculate the occupied capacity of an array
+	* Calling arguments: int array [], int villages []
 	* Return value: integer
 	*********************************************************************/
 	
@@ -152,10 +152,9 @@ public class main_Task3 {
 	}
 	
 	/**********************************************************************
-	* Method name: input_capacity_sledge
-	* Description of the Method: request the capacity of the sledge, checking
-	* that be bigger than 0.
-	* Calling arguments: 
+	* Method name: visited_villages
+	* Description of the Method: calculate the number of villages visited
+	* Calling arguments: int array[], int villages[]
 	* Return value: integer
 	*********************************************************************/
 	
@@ -173,10 +172,11 @@ public class main_Task3 {
 	
 	/**********************************************************************
 	* Method name: isBetter
-	* Description of the Method: request the capacity of the sledge, checking
-	* that be bigger than 0.
-	* Calling arguments: 
-	* Return value: integer
+	* Description of the Method: check if the actual array is better than
+	* the solution array saved
+	* Calling arguments: int actual [], int sol [], int []  villages, 
+	* int sledge_capacity
+	* Return value: boolean
 	*********************************************************************/
 	
 	public static boolean isBetter (int actual [], int sol [], int []  villages, int sledge_capacity) {

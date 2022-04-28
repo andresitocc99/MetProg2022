@@ -1,6 +1,6 @@
 package Task4;
 
-public class main {
+public class main_Task4 {
 	
 
 	public static void main(String[] args) {
@@ -9,27 +9,19 @@ public class main {
 		int digit_array [] = generate_digit_array();
 		char operators [] = generate_operators_array();
 		int actual [] = new int [4];
-		int objetivo = ((int)(Math.random()*(99-(-9))))+(-9);
+		int objective = ((int)(Math.random()*(99-(-9))))+(-9);
 		
 		System.out.print("Input array: ");
+		
 		for (int i=0; i<digit_array.length; i++) {
 			System.out.print(digit_array[i]+", ");
 		}
+		
 		System.out.print(operators[0]+", "+operators[1]);
 		System.out.println();
-		System.out.println("Objetivo: "+objetivo);
-		
+		System.out.println("objective: "+objective);
 
-		
-		/*if (!backtracking (0, actual, digit_array, objetivo,operators,0)) {
-			System.out.println("No hay posibles soluciones");
-		}*/
-		
-		
-			if (!backtracking (0, actual, digit_array, objetivo,operators,0)) {
-				System.out.println("No hay posibles soluciones");
-			}
-	//	}
+		backtracking (0, actual, digit_array, objective,operators,0);
 		
 		
 		
@@ -121,103 +113,76 @@ public class main {
 	}
 	
 	/**********************************************************************
-	* Method name: generate_digit_array
-	* Description of the Method: get an array of size 7 with non-repeated
-	* numbers from 0 to 9 and ordered randomly.
-	* Calling arguments: void.
-	* Return value: array of integers.
+	* Method name: backtracking
+	* Description of the Method: main method of the backtracking
+	* Calling arguments: int stage, int [] actual, int digit_array [], 
+	* int objective, char operators [],int stage_2.
+	* Return value: void.
 	*********************************************************************/
 	
-	/*public static boolean backtracking (int etapa, char [] actual, int digit_array [], int objetivo, char operators [],int etapa_2) {
+	public static void backtracking (int stage, int [] actual, int digit_array [], int objective, char operators [],int stage_2) {
 		
-		boolean finded = false;
-		if (etapa == actual.length) {
-			if (esSolucion(actual,digit_array,objetivo)) {
-					finded = true;
+		
+		if (stage == actual.length) {
+			if (isSolution(actual,digit_array,objective, stage_2, operators)) {
+										
 					for (int k=0;k<actual.length;k++) {
-						System.out.print(actual[k]+" ");
-					}
-					System.out.println();
-			}
-		} else {
-			for (int i = 0; i<digit_array.length && !finded; i++ ) {
-				if (etapa == 2) {
-					actual[etapa]=operators[etapa_2];
-					
-					
-				} else  {
-					actual[etapa] = ((char)('0'+digit_array[i]));
-				}
-				
-				finded = backtracking (etapa+1,actual, digit_array, objetivo,operators,0);
-				finded = backtracking (etapa+1,actual, digit_array, objetivo,operators,1);
-			
-			}
-				
-		}
-		
-		return finded;
-	
-	}*/
-	
-	public static boolean backtracking (int etapa, int [] actual, int digit_array [], int objetivo, char operators [],int etapa_2) {
-		
-		boolean finded = false;
-		if (etapa == actual.length) {
-			if (esSolucion(actual,digit_array,objetivo, etapa_2, operators)) {
-					finded = true;
-					
-					for (int k=0;k<actual.length;k++) {
-						System.out.print(actual[k]+" ");
+						System.out.print(digit_array[actual[k]]+" ");
 						if (k==1) {
-							System.out.print(operators[etapa_2]+" ");
+							System.out.print(operators[stage_2]+" ");
 						}
 					}
 					System.out.println();
 			}
 		} else {
-			for (int i = 0; i<digit_array.length && !finded; i++ ) {
+			for (int i = 0; i<digit_array.length; i++ ) {
 				
-				actual[etapa] = digit_array[i];
+				actual[stage] = i;
 				
-				finded = backtracking (etapa+1,actual, digit_array, objetivo,operators,0);
-				finded = backtracking (etapa+1,actual, digit_array, objetivo,operators,1);
+				backtracking (stage+1,actual, digit_array, objective,operators,0);
+				backtracking (stage+1,actual, digit_array, objective,operators,1);
 			
 			}
 				
 		}
 		
-		return finded;
 	
 	}
 	
+	/**********************************************************************
+	* Method name: isSolution
+	* Description of the Method: check if the operation results a given objective
+	* Calling arguments: int [] actual, int [] digit_array, int objective, 
+	* int stage_2, char operators[].
+	* Return value: boolean.
+	*********************************************************************/
 	
 	
-	public static boolean esSolucion (int [] actual, int [] digit_array, int objetivo, int etapa_2, char operators[]) {
+	public static boolean isSolution (int [] actual, int [] digit_array, int objective, int stage_2, char operators[]) {
 		
 		boolean result = false;
-		int first_op = (actual[0]*10)+actual[1];
-		int second_op = (actual[2]*10)+actual[3];
+		int first_op = (digit_array[actual[0]]*10)+digit_array[actual[1]];
+		int second_op = (digit_array[actual[2]]*10)+digit_array[actual[3]];
 		
-		switch(operators[etapa_2]) {
+		switch(operators[stage_2]) {
 		
 		case '+':
-			if ((first_op + second_op)==objetivo) {
+			if ((first_op + second_op)==objective) {
 				result = true;
 			}
 			break;
 		case '-':
-			if((first_op - second_op) == objetivo) {
+			if((first_op - second_op) == objective) {
 				result = true;
 			}
 			break;
 		case '*':
-			if((first_op * second_op) == objetivo) {
+			if((first_op * second_op) == objective) {
 				result = true;
 			}
 			break;
 		case '/':
-			if((first_op * second_op) == objetivo) {
+			if((first_op * second_op) == objective) {
 				result = true;
 			}
 			break;
@@ -226,16 +191,6 @@ public class main {
 		return result;
 	}
 	
-	public static boolean Vale (int i, int etapa, int actual []) {
-		boolean devolver = true;
-		for (int t=0; t<etapa && devolver; t++)  {
-			if (i==actual[t]) {
-				devolver = false;
-			}
-		}
-		return devolver;
-		
-	}
 }
 
 

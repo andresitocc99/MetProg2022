@@ -6,26 +6,54 @@ public class main_Task4 {
 	public static void main(String[] args) {
 		
 		
-		int digit_array [] = generate_digit_array();
+		int digits [] = generate_digit_array();
 		char operators [] = generate_operators_array();
-		int actual [] = new int [4];
+		char array [] = combinate_array(digits, operators);
+		char actual [] = new char [5];
 		int objective = ((int)(Math.random()*(99-(-9))))+(-9);
 		
 		System.out.print("Input array: ");
 		
-		for (int i=0; i<digit_array.length; i++) {
-			System.out.print(digit_array[i]+", ");
+		for (int i=0; i<array.length; i++) {
+			System.out.print(array[i]+", ");
 		}
 		
-		System.out.print(operators[0]+", "+operators[1]);
 		System.out.println();
-		System.out.println("objective: "+objective);
+		System.out.println("Objective: "+objective);
 
-		backtracking (0, actual, digit_array, objective,operators,0);
+		if (!backtracking (0, actual, array, objective)) {
+			System.out.println("Result not found");
+		}
 		
 		
 		
 	}
+	
+	/**********************************************************************
+	* Method name: combinate_array
+	* Description of the Method: combinate the array of int and the array of
+	* operators, resulting an array of char.
+	* Calling arguments: int [] digits, char [] operators.
+	* Return value: array of char.
+	*********************************************************************/
+	
+	
+	public static char [] combinate_array (int [] digits, char [] operators) {
+		char [] array = new char [9];
+		int op = 0;
+		
+		for (int i=0; i<7; i++) {
+			array[i]=(char)(digits[i]+'0');
+		}
+		
+		for (int i=7; i<array.length;i++) {
+			array[i]=operators[op];
+			op++;
+		}
+		
+		return array;
+	}
+	
 	
 	/**********************************************************************
 	* Method name: generate_digit_array
@@ -117,34 +145,39 @@ public class main_Task4 {
 	* Description of the Method: main method of the backtracking
 	* Calling arguments: int stage, int [] actual, int digit_array [], 
 	* int objective, char operators [],int stage_2.
-	* Return value: void.
+	* Return value: boolean.
 	*********************************************************************/
 	
-	public static void backtracking (int stage, int [] actual, int digit_array [], int objective, char operators [],int stage_2) {
-		
-		
+	public static boolean backtracking (int stage, char [] actual, char array [], int objective ) {
+		boolean found = false;
 		if (stage == actual.length) {
-			if (isSolution(actual,digit_array,objective, stage_2, operators)) {
-										
-					for (int k=0;k<actual.length;k++) {
-						System.out.print(digit_array[actual[k]]+" ");
-						if (k==1) {
-							System.out.print(operators[stage_2]+" ");
-						}
-					}
+			if (isSolution(actual,objective)) {
+				found = true;
+				
+				for (int k=0; k<actual.length;k++) {
+					System.out.print(actual[k]+" ");
+				}
 					System.out.println();
 			}
 		} else {
-			for (int i = 0; i<digit_array.length; i++ ) {
-				
-				actual[stage] = i;
-				
-				backtracking (stage+1,actual, digit_array, objective,operators,0);
-				backtracking (stage+1,actual, digit_array, objective,operators,1);
 			
-			}
-				
+				if (stage != 2) {
+					for (int i=0; i<7 && !found;i++) {
+						actual[stage]=array[i];
+						found = backtracking (stage+1,actual, array,objective);
+					}
+				} else {
+					for (int i=7;i<array.length && !found;i++) {
+						actual[stage]=array[i];
+						found = backtracking (stage+1,actual, array,objective);
+					}
+				}
+			
 		}
+		return found;
+		
+		
+		
 		
 	
 	}
@@ -158,13 +191,15 @@ public class main_Task4 {
 	*********************************************************************/
 	
 	
-	public static boolean isSolution (int [] actual, int [] digit_array, int objective, int stage_2, char operators[]) {
+	public static boolean isSolution (char [] actual, int objective) {
 		
 		boolean result = false;
-		int first_op = (digit_array[actual[0]]*10)+digit_array[actual[1]];
-		int second_op = (digit_array[actual[2]]*10)+digit_array[actual[3]];
 		
-		switch(operators[stage_2]) {
+		int first_op = (Integer.parseInt(String.valueOf(actual[0])))*10+Integer.parseInt(String.valueOf(actual[1]));
+		int second_op = (Integer.parseInt(String.valueOf(actual[3])))*10+Integer.parseInt(String.valueOf(actual[4]));
+		
+		
+		switch(actual[2]) {
 		
 		case '+':
 			if ((first_op + second_op)==objective) {
@@ -182,7 +217,7 @@ public class main_Task4 {
 			}
 			break;
 		case '/':
-			if((first_op * second_op) == objective) {
+			if((first_op / second_op) == objective) {
 				result = true;
 			}
 			break;

@@ -3,6 +3,9 @@ package Task3;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -13,26 +16,23 @@ public class main_Task3 {
 	public static void main (String[] args) throws IOException, FileNotFoundException {
 		
 		try {
-			String path = "D:\\Documentos\\GitHub\\MetProg2022\\src\\Task3\\data.txt"; // Path of the File
-			int N = numberOfVillages(path); // Total of villages
-			
+			String path = "D:\\Documentos\\GitHub\\MetProg2022\\src\\Task3\\data.txt"; // Path of the File	
+			City [] Cities = readFile(path);
 			
 			int sledge_capacity =  input_capacity_sledge(); // Capacity of the sledge
-			int [] villages = readFile (path, N);
-			int M = input_max_visited_villages (N); // TimeToVisit;
+			int M = input_max_visited_villages (Cities.length); // TimeToVisit;
 			
+			quicksort(Cities,0,Cities.length); // Apply Quicksort to order the vector
 			
-			int [] actual = new int [M];
-			int [] sol = new int [M];
+			ArrayList<City> CitiesList = new ArrayList<City>(Arrays.asList(Cities));
 			
-			backtrackingSledge(0, actual, sol, villages, sledge_capacity);
+			ArrayList<City> visited_Cities = greedy_algorithm(CitiesList,sledge_capacity,M);
 			
-			
-			for (int i=0; i<sol.length;i++) {
-				if (villages[sol[i]]!=0) {
-					System.out.println("Village Nº "+sol[i] + ": "+villages[sol[i]]+" ");
-				}
+			for (int i=0;i<visited_Cities.size();i++) {
+				visited_Cities.get(i).toString();
 			}
+			
+			
 			
 			System.out.println("Program finished");
 			
@@ -40,6 +40,63 @@ public class main_Task3 {
             System.out.println("Write numbers please");
         }
 		
+	}
+	
+	public static ArrayList<City> greedy_algorithm(ArrayList<City>Cities, int sledge_capacity, int M) {
+		int food_taken = 0;
+		ArrayList<City> visited_Cities = new ArrayList<City>();
+		
+		
+		while (Cities.size()!=0 && visited_Cities.size() <M && food_taken < sledge_capacity) {
+			City city = Cities.get(Cities.size()-1);
+			Cities.remove(Cities.size()-1);
+			if ((sledge_capacity-food_taken)>=city.getSupplie()) {
+				visited_Cities.add(city);
+			}
+			
+		}
+		return visited_Cities;
+	}
+	
+	public static void quicksort (City [] city, int li, int ls) {
+		if (li < ls) {
+			int pos = partition (city, li, ls);
+			quicksort(city,li,pos);
+			quicksort(city,pos+1,ls);
+		}
+	}
+	
+	public static int partition (City [] city, int li, int ls) {
+		int piv = city[ls].getSupplie();
+		int i = li-1;
+		int j = ls+1;
+		
+		do {
+			do {
+				j=j-1;
+			} while (city[j].getSupplie()>piv);
+			
+			do {
+				i=i-1;
+			} while (city[i].getSupplie()<piv);
+			
+			if (i<j) {
+				replace(city,i,j);
+			}
+		} while (i<j);
+		
+		return j;
+		
+	}
+	
+	public static void replace (City[] city, int i, int j) {
+		int aux_1 = city[i].getId();
+		int aux_2 = city[i].getSupplie();
+		
+		city[i].setId(city[j].getId());
+		city[i].setSupplie(city[j].getSupplie());
+		city[j].setId(aux_1);
+		city[j].setSupplie(aux_2);
 	}
 	
 	/**********************************************************************
@@ -90,137 +147,7 @@ public class main_Task3 {
 		return input;
 	}
 	
-	/**********************************************************************
-	* Method name: backtrackingSledge
-	* Description of the Method: main method of the backtracking. We get 
-	* all the possible combinations, but when the sum of the array is equal
-	* or bigger than a the sledge capacity, the combination done is stopped. 
-	* Calling arguments: int stage, int actual [], int sol [], 
-	* int villages [], int sledge_capacity
-	* Return value: void
-	*********************************************************************/
 	
-	public static void backtrackingSledge (int stage, int actual [], int sol [], int villages [], int sledge_capacity) {
-		if (stage == actual.length || full  (actual,sledge_capacity,villages)) {
-			if (isBetter(actual, sol, villages, sledge_capacity)) {
-				
-				for (int k=0;k<actual.length;k++) {
-					sol[k]=actual[k];
-				}
-			}
-		} else {
-			for (int i=0; i<villages.length; i++) {
-				if (isValid (stage, i, actual) && !full (actual,sledge_capacity,villages)) {
-					//actual[stage] = villages[i];
-					actual[stage] = i;
-							
-					backtrackingSledge(stage+1, actual, sol, villages, sledge_capacity);
-				}
-			}
-		}
-	}
-	
-	/**********************************************************************
-	* Method name: isValid
-	* Description of the Method: check if a number that is going to be added
-	* the array is already 
-	* Calling arguments:  int stage, int i, int actual[],int villages[]
-	* Return value: boolean
-	*********************************************************************/
-	
-	public static boolean isValid (int stage, int i, int actual[]) {
-		boolean isValid = true;
-		for (int k=0; k<stage && isValid; k++) {
-			isValid = (actual[k] != i);
-		}
-		return isValid;
-	}
-	
-	/**********************************************************************
-	* Method name: occupied_capacity
-	* Description of the Method: calculate the occupied capacity of an array
-	* Calling arguments: int array [], int villages []
-	* Return value: integer
-	*********************************************************************/
-	
-	public static int occupied_capacity (int array [], int villages []) {
-		int occupied_capacity = 0;
-		for (int i=0; i<array.length; i++) {
-			occupied_capacity += villages[array[i]];
-		}
-		return occupied_capacity;
-	}
-	
-	/**********************************************************************
-	* Method name: visited_villages
-	* Description of the Method: calculate the number of villages visited
-	* Calling arguments: int array[], int villages[]
-	* Return value: integer
-	*********************************************************************/
-	
-	public static int visited_villages (int array[], int villages[]) {
-		int visited_villages = 0;
-		
-		for (int i=0; i< array.length; i++) {
-			if (villages[array[i]] !=0 ) { 
-				visited_villages++;
-			}
-		}
-		
-		return visited_villages;
-	}
-	
-	/**********************************************************************
-	* Method name: isBetter
-	* Description of the Method: check if the actual array is better than
-	* the solution array saved
-	* Calling arguments: int actual [], int sol [], int []  villages, 
-	* int sledge_capacity
-	* Return value: boolean
-	*********************************************************************/
-	
-	public static boolean isBetter (int actual [], int sol [], int []  villages, int sledge_capacity) {
-		int volume_actual = occupied_capacity (actual,villages);
-		int visited_villages_actual = 0, visited_villages_solution = 0;
-		
-		boolean isBetter = true;
-		
-		
-		if (volume_actual != sledge_capacity) {
-			isBetter = false;
-		} else {
-			if (sol[0]!= sol[1]) {
-				visited_villages_actual = visited_villages (actual,villages);
-				visited_villages_solution = visited_villages (sol,villages);
-				isBetter = (visited_villages_actual < visited_villages_solution);
-			}
-		}
-		return isBetter;
-	}
-	
-	/**********************************************************************
-	* Method name: full
-	* Description of the Method: check if the actual array adds already the
-	* a given sledge capacity.
-	* Calling arguments: int actual [], int sledge_capacity, int villages []
-	* Return value: boolean
-	*********************************************************************/
-	
-	public static boolean full (int actual [], int sledge_capacity, int villages []) {
-		boolean full = false;
-		int sum = 0;
-		
-		for (int i=0; i<actual.length && !full;i++) {
-			if (sum>=sledge_capacity) {
-				full = true;
-			} else {
-				//sum += actual[i];
-				sum += villages[actual[i]];
-			}
-		}
-		
-		return full;
-	}
 	
 	/**********************************************************************
 	* Method name: readFile
@@ -230,45 +157,36 @@ public class main_Task3 {
 	* Return value: array of integers.
 	*********************************************************************/
 	
-	public static int [] readFile (String path, int N) throws FileNotFoundException {
-		int [] villages = new int [N];
+	public static City [] readFile (String path) throws FileNotFoundException {
+		
+		City[] cities = new City [numberOfElements (path)];
+		
 		try {
 			File f = new File (path);
 			Scanner sc = new Scanner (f);
 			int counter = 0;
 			while (sc.hasNext()) {
-				int village_kilos = sc.nextInt();
-				villages [counter] = village_kilos;
+				int supplie = sc.nextInt();
+				cities[counter] = new City (counter,supplie);
 				counter++;
 			}
 			sc.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("File not Found");
 		}
-		return villages;
+		return cities;
 	}
 	
-	/**********************************************************************
-	* Method name: numberOfVillages
-	* Description of the Method: calculate the number of written lines 
-	* of the txt file
-	* Calling arguments: path of the file
-	* Return value: integer
-	*********************************************************************/
-	
-	public static int numberOfVillages (String path) throws FileNotFoundException {
+	public static int numberOfElements (String path) throws FileNotFoundException {
+		Scanner sc = new Scanner (new File(path));
 		int count = 0;
-		try {
-			Scanner sc = new Scanner (new File (path));
-			while (sc.hasNext()) {
-				sc.nextLine();
-				count++;
-			}
-			sc.close();
-		} catch (FileNotFoundException e) {
-			System.out.println("File not Found");
+		while (sc.hasNext()) {
+			sc.nextLine();
+			count++;
 		}
+		sc.close();
 		return count;
+}
 	
-	}
+	
 }
